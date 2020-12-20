@@ -1,0 +1,44 @@
+  - name: "Copying Hadproxy Configuration file..."
+    template:
+      src: "/root/haproxy.cfg"
+      dest: "/etc/haproxy/haproxy.cfg"
+
+    notify:
+    - haproxy_restart
+
+  handlers:
+  - name: haproxy_restart
+    service:
+      name: "haproxy"
+      state: restarted
+
+
+- hosts: Webapp
+  tasks:
+  - name: "Installing httpd software"
+    package:
+      name: "httpd"
+
+  - name: "Installing PHP"
+    package:
+      name: "php"
+
+  - name: "Copying web file"
+    copy:
+      src: "/root/my.php"
+      dest: "/var/www/html/"
+
+  - name: "starting httpd Services"
+    service:
+      name: "httpd"
+
+    notify:
+    - httpd_restart
+
+
+  handlers:
+
+  - name: httpd_restart
+    service:
+      name: "httpd"
+      state: restarted
